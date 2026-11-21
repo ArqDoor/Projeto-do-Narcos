@@ -58,7 +58,13 @@ const Diagnostico = z.object({
   proximos_passos: z.array(z.string()),
 });
 
-const Resultado = z.object({ curriculo: Curriculo, diagnostico: Diagnostico });
+const Resultado = z.object({
+  e_curriculo: z.boolean().describe("false se o documento enviado claramente não for um currículo"),
+  curriculo: Curriculo,
+  diagnostico: Diagnostico,
+});
+
+export class NaoECurriculoError extends Error {}
 
 const SYSTEM = `Você é um especialista em recrutamento e redação de currículos no Brasil.
 Você recebe o currículo de uma pessoa e faz duas entregas:
@@ -80,11 +86,15 @@ Você recebe o currículo de uma pessoa e faz duas entregas:
   Microsoft Learn, Coursera em modo ouvinte, etc.). Não invente links.
 - Termine com próximos passos concretos.
 
+Se o documento claramente não for um currículo (ex.: boleto, contrato, livro), marque e_curriculo como false
+e preencha os demais campos com valores vazios.
+
+Use apenas texto simples nos campos: sem emojis, sem markdown e sem símbolos especiais.
 Responda inteiramente em português do Brasil.`;
 
 export async function analisarCurriculo(pdfBuffer) {
   const response = await client.beta.messages.parse({
-    model: "claude-opus-5-5",
+    model: "claude-sonnet-5-5",
     max_tokens: 16000,
     betas: ["server-side-fallback-2026-07-01"],
     fallbacks: "default",
@@ -106,6 +116,8 @@ export async function analisarCurriculo(pdfBuffer) {
 
   if (response.stop_reason === "refusal") throw new Error("A IA não conseguiu processar este documento.");
   if (response.stop_reason === "max_tokens") throw new Error("O currículo é longo demais para processar de uma vez.");
-  if (!response.parsed_output) throw new Error("Resposta da IA em formato inesperado.");
-  return response.parsed_output;
+  const out = response.parsed_output;
+  if (!out) throw new Error("Resposta da IA em formato inesperado.");
+  if (!out.e_curriculo) throw new NaoECurriculoError("Esse PDF não parece ser um currículo. Envie o arquivo do seu currículo.");
+  return out;
 }

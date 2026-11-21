@@ -4,101 +4,374 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Currículo Turbo</title>
+<meta name="description" content="Envie seu currículo em PDF e receba uma versão corrigida e profissional, mais um diagnóstico com o que melhorar e cursos gratuitos." />
+<meta name="theme-color" content="#16324F" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%2316324F'/><path d='M10 8h9l5 5v11a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2z' fill='%23fff'/><path d='M12 17h8M12 21h6' stroke='%23F2A93B' stroke-width='2' stroke-linecap='round'/></svg>" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 <style>
-  :root { --pri:#1F3A5F; --pri2:#2F5D8F; --bg:#F4F7FB; --card:#fff; --txt:#1d2433; --suave:#5b6578; --borda:#d6deea; }
+  :root {
+    --navy: #16324F; --navy-2: #24507D; --accent: #F2A93B; --accent-soft: #FDF1DE;
+    --bg: #F5F7FB; --card: #FFFFFF; --txt: #18212F; --suave: #5A6577; --borda: #DCE3EE;
+    --ok: #1E7F4F; --ok-soft: #E5F4EC; --erro: #B42318; --erro-soft: #FDECEA;
+    --raio: 16px; --sombra: 0 1px 2px rgba(22,50,79,.06), 0 8px 32px rgba(22,50,79,.08);
+    color-scheme: light;
+  }
   * { box-sizing: border-box; }
-  body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background:var(--bg); color:var(--txt); }
-  main { max-width: 640px; margin: 0 auto; padding: 48px 16px; }
-  h1 { font-size: 2rem; margin: 0 0 8px; color: var(--pri); }
-  p.sub { color: var(--suave); margin: 0 0 32px; line-height: 1.5; }
-  .card { background: var(--card); border-radius: 16px; padding: 28px; box-shadow: 0 4px 24px rgba(31,58,95,.08); }
-  .drop { border: 2px dashed var(--borda); border-radius: 12px; padding: 40px 16px; text-align: center; cursor: pointer; transition: .2s; }
-  .drop.ativo, .drop:hover { border-color: var(--pri2); background: #eef3fa; }
-  .drop strong { display:block; margin-bottom:6px; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--txt); line-height: 1.5; }
+  button, input { font: inherit; }
+  a { color: inherit; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 16px; }
+
+  /* Topo */
+  header.topo { padding: 20px 0; }
+  .marca { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.1rem; color: var(--navy); text-decoration: none; }
+  .marca svg { flex: none; }
+
+  /* Hero */
+  .hero { display: grid; grid-template-columns: 1.05fr 1fr; gap: 48px; align-items: center; padding: 32px 0 56px; }
+  .selo { display: inline-flex; align-items: center; gap: 8px; background: var(--accent-soft); color: #8A5A12; font-weight: 600; font-size: .82rem; padding: 6px 12px; border-radius: 999px; }
+  h1 { font-size: clamp(2rem, 4.4vw, 3rem); line-height: 1.1; letter-spacing: -.02em; margin: 16px 0 16px; color: var(--navy); }
+  h1 em { font-style: normal; background: linear-gradient(transparent 62%, rgba(242,169,59,.45) 62%); }
+  .lead { font-size: 1.08rem; color: var(--suave); margin: 0 0 24px; max-width: 34em; }
+  .checks { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+  .checks li { display: flex; gap: 10px; align-items: flex-start; color: var(--txt); }
+  .checks svg { flex: none; margin-top: 3px; }
+
+  /* Card de upload */
+  .card { background: var(--card); border-radius: var(--raio); box-shadow: var(--sombra); padding: 24px; border: 1px solid #EDF1F7; }
+  .drop { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; width: 100%; min-height: 200px;
+          border: 2px dashed var(--borda); border-radius: 12px; padding: 28px 16px; text-align: center; cursor: pointer;
+          transition: border-color .15s, background .15s; background: #FAFBFD; }
+  .drop:hover, .drop.ativo { border-color: var(--navy-2); background: #EEF3FA; }
+  .drop:focus-within { outline: 3px solid rgba(36,80,125,.25); outline-offset: 2px; }
+  .drop .icone { width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; background: #E8EEF7; color: var(--navy); margin-bottom: 6px; }
+  .drop strong { font-size: 1.02rem; }
   .drop small { color: var(--suave); }
-  input[type=file] { display:none; }
-  button { width:100%; margin-top:20px; padding:14px; border:0; border-radius:10px; background:var(--pri); color:#fff; font-size:1rem; font-weight:600; cursor:pointer; }
-  button:disabled { opacity:.5; cursor:not-allowed; }
-  .status { margin-top:20px; text-align:center; color:var(--suave); }
-  .spinner { width:28px; height:28px; border:3px solid var(--borda); border-top-color:var(--pri); border-radius:50%; animation: g 1s linear infinite; margin: 0 auto 10px; }
-  @keyframes g { to { transform: rotate(360deg); } }
-  .erro { color:#C62828; }
-  .resultado { display:none; margin-top:24px; }
-  .resultado h2 { font-size:1.1rem; margin:0 0 12px; }
-  .links { display:grid; gap:12px; grid-template-columns: 1fr 1fr; }
-  .links a { display:block; padding:16px; border-radius:10px; text-decoration:none; text-align:center; font-weight:600; border:1px solid var(--borda); color:var(--pri); background:#fff; }
-  .links a:hover { background:#eef3fa; }
-  ul.passos { color: var(--suave); line-height:1.8; padding-left: 20px; margin-top: 28px; }
-  @media (max-width: 480px) { .links { grid-template-columns: 1fr; } }
+  .drop.tem-arquivo { border-style: solid; border-color: var(--ok); background: var(--ok-soft); }
+  .drop.tem-arquivo .icone { background: #fff; color: var(--ok); }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; margin-top: 16px; padding: 14px 18px;
+         border: 0; border-radius: 12px; background: var(--navy); color: #fff; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background .15s, transform .05s; }
+  .btn:hover:not(:disabled) { background: var(--navy-2); }
+  .btn:active:not(:disabled) { transform: translateY(1px); }
+  .btn:disabled { background: #A9B4C4; cursor: not-allowed; }
+  .btn.sec { background: transparent; color: var(--navy); border: 1px solid var(--borda); }
+  .btn.sec:hover { background: #EEF3FA; }
+  .nota-priv { margin: 14px 0 0; font-size: .82rem; color: var(--suave); display: flex; gap: 6px; align-items: center; justify-content: center; }
+
+  /* Estados */
+  .estado { display: none; }
+  .estado.on { display: block; }
+  .carregando { text-align: center; padding: 28px 8px; }
+  .spinner { width: 44px; height: 44px; border: 4px solid #E3E9F2; border-top-color: var(--navy); border-radius: 50%; animation: gira 1s linear infinite; margin: 0 auto 18px; }
+  @keyframes gira { to { transform: rotate(360deg); } }
+  .etapa { font-weight: 600; min-height: 1.5em; }
+  .barra { height: 6px; background: #E3E9F2; border-radius: 99px; overflow: hidden; margin: 16px auto 8px; max-width: 280px; }
+  .barra span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--navy), var(--accent)); transition: width 1s ease; }
+  .carregando small { color: var(--suave); }
+
+  .alerta { display: none; margin-top: 14px; padding: 12px 14px; border-radius: 10px; background: var(--erro-soft); color: var(--erro); font-size: .92rem; }
+  .alerta.on { display: block; }
+
+  .res-topo { display: flex; align-items: center; gap: 16px; margin-bottom: 18px; }
+  .nota { flex: none; width: 76px; height: 76px; border-radius: 50%; display: grid; place-items: center; text-align: center;
+          background: conic-gradient(var(--cor-nota, var(--navy)) calc(var(--p, 0) * 1%), #E3E9F2 0); }
+  .nota div { width: 62px; height: 62px; border-radius: 50%; background: #fff; display: grid; place-items: center; font-weight: 800; font-size: 1.25rem; color: var(--navy); line-height: 1; }
+  .nota small { display: block; font-size: .62rem; font-weight: 600; color: var(--suave); margin-top: 2px; }
+  .res-topo h2 { margin: 0 0 2px; font-size: 1.15rem; }
+  .res-topo p { margin: 0; color: var(--suave); font-size: .92rem; }
+  .downloads { display: grid; gap: 10px; }
+  .dl { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border: 1px solid var(--borda); border-radius: 12px; text-decoration: none; transition: background .15s, border-color .15s; }
+  .dl:hover { background: #F3F6FB; border-color: var(--navy-2); }
+  .dl .ic { flex: none; width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; }
+  .dl strong { display: block; color: var(--txt); }
+  .dl span.d { font-size: .85rem; color: var(--suave); }
+  .dl .seta { margin-left: auto; color: var(--navy); }
+
+  /* Seções */
+  section.bloco { padding: 56px 0; }
+  section.bloco h2.tit { font-size: clamp(1.5rem, 3vw, 2rem); letter-spacing: -.01em; color: var(--navy); margin: 0 0 8px; text-align: center; }
+  section.bloco p.sub { color: var(--suave); text-align: center; margin: 0 auto 32px; max-width: 36em; }
+  .passos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; counter-reset: p; }
+  .passo { background: var(--card); border-radius: var(--raio); padding: 22px; border: 1px solid #EDF1F7; }
+  .passo::before { counter-increment: p; content: counter(p); display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--navy); color: #fff; font-weight: 700; margin-bottom: 12px; }
+  .passo h3 { margin: 0 0 6px; font-size: 1.02rem; }
+  .passo p { margin: 0; color: var(--suave); font-size: .95rem; }
+
+  .entregas { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .entrega { background: var(--card); border-radius: var(--raio); padding: 26px; border: 1px solid #EDF1F7; box-shadow: var(--sombra); }
+  .entrega h3 { margin: 12px 0 12px; font-size: 1.15rem; }
+  .entrega ul { margin: 0; padding-left: 18px; color: var(--suave); display: grid; gap: 6px; }
+  .tag { display: inline-block; font-size: .75rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; }
+
+  .faq { max-width: 720px; margin: 0 auto; display: grid; gap: 10px; }
+  .faq details { background: var(--card); border: 1px solid #EDF1F7; border-radius: 12px; padding: 16px 18px; }
+  .faq summary { cursor: pointer; font-weight: 600; list-style: none; display: flex; justify-content: space-between; gap: 12px; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: "+"; font-weight: 700; color: var(--navy); }
+  .faq details[open] summary::after { content: "–"; }
+  .faq details p { margin: 10px 0 0; color: var(--suave); }
+
+  footer { padding: 32px 0 40px; text-align: center; color: var(--suave); font-size: .88rem; border-top: 1px solid var(--borda); }
+
+  @media (max-width: 860px) {
+    .hero { grid-template-columns: 1fr; gap: 28px; padding-top: 12px; }
+    .passos, .entregas { grid-template-columns: 1fr; }
+    section.bloco { padding: 40px 0; }
+  }
+  @media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 3s; } .barra span { transition: none; } }
 </style>
 </head>
 <body>
+<header class="topo">
+  <div class="wrap">
+    <a class="marca" href="/">
+      <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#16324F"/><path d="M10 8h9l5 5v11a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2z" fill="#fff"/><path d="M12 17h8M12 21h6" stroke="#F2A93B" stroke-width="2" stroke-linecap="round"/></svg>
+      Currículo Turbo
+    </a>
+  </div>
+</header>
+
 <main>
-  <h1>Currículo Turbo</h1>
-  <p class="sub">Envie seu currículo em PDF. A IA corrige o português, reorganiza tudo num modelo profissional e gera um diagnóstico com o que melhorar e cursos gratuitos para fazer.</p>
+  <div class="wrap hero">
+    <div>
+      <span class="selo">✨ Grátis · pronto em cerca de 1 minuto</span>
+      <h1>Seu currículo <em>corrigido e profissional</em>, com um diagnóstico do que melhorar</h1>
+      <p class="lead">Envie o PDF do seu currículo. A IA corrige o português, organiza tudo num modelo limpo que valoriza suas experiências e habilidades, e aponta cursos gratuitos para você evoluir.</p>
+      <ul class="checks">
+        <li><svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="#E5F4EC"/><path d="M6 10.5l2.5 2.5L14 7.5" stroke="#1E7F4F" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Gramática e ortografia revisadas</li>
+        <li><svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="#E5F4EC"/><path d="M6 10.5l2.5 2.5L14 7.5" stroke="#1E7F4F" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Experiências, habilidades e soft skills em destaque</li>
+        <li><svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="#E5F4EC"/><path d="M6 10.5l2.5 2.5L14 7.5" stroke="#1E7F4F" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Nota, pontos a melhorar e cursos gratuitos</li>
+      </ul>
+    </div>
 
-  <div class="card">
-    <label class="drop" id="drop" for="arquivo">
-      <strong id="nomeArq">Clique ou arraste seu currículo aqui</strong>
-      <small>Somente PDF · até 10 MB</small>
-    </label>
-    <input type="file" id="arquivo" accept="application/pdf" />
-    <button id="enviar" disabled>Analisar meu currículo</button>
-    <div class="status" id="status"></div>
+    <div class="card" id="app" aria-live="polite">
+      <!-- Estado 1: envio -->
+      <div class="estado on" id="stEnvio">
+        <label class="drop" id="drop">
+          <input class="sr" type="file" id="arquivo" accept="application/pdf,.pdf" />
+          <span class="icone" id="dropIcone" aria-hidden="true">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
+          </span>
+          <strong id="dropTitulo">Clique ou arraste seu currículo aqui</strong>
+          <small id="dropSub">Arquivo PDF de até 10 MB</small>
+        </label>
+        <button class="btn" id="enviar" disabled>Analisar meu currículo</button>
+        <div class="alerta" id="erro" role="alert"></div>
+        <p class="nota-priv">🔒 Seu arquivo não fica salvo: é analisado e descartado.</p>
+      </div>
 
-    <div class="resultado" id="resultado">
-      <h2 id="titRes">Pronto!</h2>
-      <div class="links">
-        <a id="lnkCv" download>📄 Currículo novo</a>
-        <a id="lnkDiag" download>📊 Diagnóstico</a>
+      <!-- Estado 2: carregando -->
+      <div class="estado carregando" id="stCarregando">
+        <div class="spinner" aria-hidden="true"></div>
+        <div class="etapa" id="etapa">Lendo seu currículo...</div>
+        <div class="barra"><span id="barra"></span></div>
+        <small>Isso costuma levar de 1 a 2 minutos. Não feche esta página.</small>
+      </div>
+
+      <!-- Estado 3: resultado -->
+      <div class="estado" id="stResultado">
+        <div class="res-topo">
+          <div class="nota" id="notaAnel"><div><span><span id="notaValor">–</span><small>de 10</small></span></div></div>
+          <div>
+            <h2>Pronto! Seus arquivos chegaram</h2>
+            <p id="notaTexto">Esta é a nota do seu currículo original.</p>
+          </div>
+        </div>
+        <div class="downloads">
+          <a class="dl" id="lnkCv" download>
+            <span class="ic" style="background:#E8EEF7;color:#16324F" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg>
+            </span>
+            <span><strong>Currículo novo</strong><span class="d">Corrigido e no modelo profissional</span></span>
+            <span class="seta" aria-hidden="true">⬇</span>
+          </a>
+          <a class="dl" id="lnkDiag" download>
+            <span class="ic" style="background:#FDF1DE;color:#8A5A12" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+            </span>
+            <span><strong>Diagnóstico</strong><span class="d">O que melhorar e cursos gratuitos</span></span>
+            <span class="seta" aria-hidden="true">⬇</span>
+          </a>
+        </div>
+        <button class="btn sec" id="outro">Analisar outro currículo</button>
+        <p class="nota-priv">Revise o currículo gerado antes de enviar a uma vaga.</p>
       </div>
     </div>
   </div>
 
-  <ul class="passos">
-    <li>Seu arquivo não fica salvo: é processado e descartado.</li>
-    <li>Revise o currículo gerado antes de enviar a uma vaga.</li>
-  </ul>
+  <section class="bloco">
+    <div class="wrap">
+      <h2 class="tit">Como funciona</h2>
+      <p class="sub">Três passos, sem cadastro.</p>
+      <div class="passos">
+        <div class="passo"><h3>Envie seu PDF</h3><p>Pode ser o currículo que você já tem, do jeito que estiver.</p></div>
+        <div class="passo"><h3>A IA revisa</h3><p>Corrige o português, reorganiza as informações e avalia o conteúdo, sem inventar nada.</p></div>
+        <div class="passo"><h3>Baixe os dois PDFs</h3><p>O currículo novo e o diagnóstico ficam prontos para baixar na hora.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bloco" style="padding-top:0">
+    <div class="wrap">
+      <h2 class="tit">O que você recebe</h2>
+      <p class="sub">Dois documentos que se completam.</p>
+      <div class="entregas">
+        <div class="entrega">
+          <span class="tag" style="background:#E8EEF7;color:#16324F">PDF 1</span>
+          <h3>Currículo reescrito</h3>
+          <ul>
+            <li>Português revisado (gramática e ortografia)</li>
+            <li>Resumo profissional objetivo</li>
+            <li>Experiências em tópicos com verbos de ação</li>
+            <li>Habilidades técnicas e soft skills em destaque</li>
+          </ul>
+        </div>
+        <div class="entrega">
+          <span class="tag" style="background:#FDF1DE;color:#8A5A12">PDF 2</span>
+          <h3>Diagnóstico do currículo</h3>
+          <ul>
+            <li>Nota geral de 0 a 10</li>
+            <li>Pontos fortes e aspectos a melhorar</li>
+            <li>Correções feitas, com antes e depois</li>
+            <li>Cursos gratuitos recomendados e próximos passos</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bloco" style="padding-top:0">
+    <div class="wrap">
+      <h2 class="tit">Dúvidas comuns</h2>
+      <p class="sub">&nbsp;</p>
+      <div class="faq">
+        <details><summary>A IA pode inventar informações no meu currículo?</summary><p>Ela é instruída a não criar empresas, datas, números ou cursos que não estejam no seu arquivo. O que faltar aparece no diagnóstico como sugestão. Mesmo assim, revise o resultado antes de usar.</p></details>
+        <details><summary>Meus dados ficam guardados?</summary><p>Não. O arquivo é processado na memória do servidor e descartado assim que os PDFs são gerados.</p></details>
+        <details><summary>Meu currículo é uma imagem escaneada. Funciona?</summary><p>Funciona na maioria dos casos, desde que o texto esteja legível. PDFs com texto selecionável dão resultados melhores.</p></details>
+        <details><summary>Os cursos recomendados são pagos?</summary><p>Não. A recomendação é sempre de cursos gratuitos de plataformas conhecidas, como Fundação Bradesco, SENAI, Sebrae e Escola Virtual.Gov.</p></details>
+      </div>
+    </div>
+  </section>
 </main>
+
+<footer><div class="wrap">Currículo Turbo · Feito com IA. Revise sempre o resultado antes de enviar.</div></footer>
 
 <script>
   const $ = (id) => document.getElementById(id);
-  const input = $("arquivo"), drop = $("drop"), btn = $("enviar"), status = $("status");
-  let arquivo = null;
+  const input = $("arquivo"), drop = $("drop"), btn = $("enviar"), erro = $("erro");
+  const MAX = 10 * 1024 * 1024;
+  let arquivo = null, urls = [], timerEtapas = null;
+
+  function estado(nome) {
+    for (const id of ["stEnvio", "stCarregando", "stResultado"]) $(id).classList.toggle("on", id === nome);
+  }
+  function mostrarErro(msg) { erro.textContent = msg; erro.classList.add("on"); }
+  function limparErro() { erro.textContent = ""; erro.classList.remove("on"); }
+
+  function ehPdf(f) { return f && (f.type === "application/pdf" || /\.pdf$/i.test(f.name)); }
 
   function escolher(f) {
+    limparErro();
     if (!f) return;
-    if (f.type !== "application/pdf") { status.innerHTML = '<span class="erro">Envie um arquivo PDF.</span>'; return; }
-    arquivo = f; $("nomeArq").textContent = f.name; btn.disabled = false; status.textContent = "";
-    $("resultado").style.display = "none";
+    if (!ehPdf(f)) { mostrarErro("Esse arquivo não é um PDF. Salve seu currículo em PDF e tente de novo."); return; }
+    if (f.size > MAX) { mostrarErro("O arquivo passa de 10 MB. Tente uma versão mais leve do PDF."); return; }
+    arquivo = f;
+    drop.classList.add("tem-arquivo");
+    $("dropTitulo").textContent = f.name;
+    $("dropSub").textContent = `${(f.size / 1024 / 1024).toFixed(2).replace(".", ",")} MB · clique para trocar`;
+    $("dropIcone").innerHTML = '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+    btn.disabled = false;
   }
-  input.addEventListener("change", () => escolher(input.files[0]));
-  ["dragover", "dragenter"].forEach((e) => drop.addEventListener(e, (ev) => { ev.preventDefault(); drop.classList.add("ativo"); }));
+
+  input.addEventListener("change", () => { escolher(input.files[0]); input.value = ""; });
+  ["dragenter", "dragover"].forEach((e) => drop.addEventListener(e, (ev) => { ev.preventDefault(); drop.classList.add("ativo"); }));
   ["dragleave", "drop"].forEach((e) => drop.addEventListener(e, (ev) => { ev.preventDefault(); drop.classList.remove("ativo"); }));
   drop.addEventListener("drop", (ev) => escolher(ev.dataTransfer.files[0]));
+  // Evita que soltar o arquivo fora da área abra o PDF e tire a pessoa do site
+  ["dragover", "drop"].forEach((e) => window.addEventListener(e, (ev) => ev.preventDefault()));
+
+  const ETAPAS = [
+    [0, "Lendo seu currículo...", 8],
+    [6, "Corrigindo gramática e ortografia...", 25],
+    [20, "Organizando experiências e habilidades...", 45],
+    [40, "Avaliando pontos fortes e o que melhorar...", 65],
+    [60, "Buscando cursos gratuitos para você...", 80],
+    [85, "Montando seus PDFs...", 92],
+  ];
+  function iniciarEtapas() {
+    const t0 = Date.now();
+    const tick = () => {
+      const s = (Date.now() - t0) / 1000;
+      const atual = ETAPAS.filter(([t]) => s >= t).pop();
+      $("etapa").textContent = atual[1];
+      $("barra").style.width = atual[2] + "%";
+    };
+    tick(); timerEtapas = setInterval(tick, 1000);
+  }
+  function pararEtapas() { clearInterval(timerEtapas); }
 
   function pdfUrl(b64) {
     const bytes = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
-    return URL.createObjectURL(new Blob([bytes], { type: "application/pdf" }));
+    const url = URL.createObjectURL(new Blob([bytes], { type: "application/pdf" }));
+    urls.push(url);
+    return url;
+  }
+  function nomeArquivo(nome) {
+    return (nome || "curriculo").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^\w]+/g, "_").replace(/^_|_$/g, "") || "curriculo";
   }
 
   btn.addEventListener("click", async () => {
     if (!arquivo) return;
+    limparErro();
     btn.disabled = true;
-    status.innerHTML = '<div class="spinner"></div>Analisando seu currículo... isso pode levar até 1–2 minutos.';
-    const form = new FormData(); form.append("curriculo", arquivo);
+    estado("stCarregando");
+    iniciarEtapas();
+    const form = new FormData();
+    form.append("curriculo", arquivo);
     try {
-      const r = await fetch("/api/analisar", { method: "POST", body: form });
-      const dados = await r.json();
-      if (!r.ok) throw new Error(dados.erro || "Erro ao processar.");
-      const base = (dados.nome || "curriculo").replace(/\s+/g, "_");
+      const ctrl = new AbortController();
+      const limite = setTimeout(() => ctrl.abort(), 5 * 60 * 1000);
+      const r = await fetch("/api/analisar", { method: "POST", body: form, signal: ctrl.signal });
+      clearTimeout(limite);
+      let dados;
+      try { dados = await r.json(); } catch { throw new Error("O servidor demorou ou respondeu de forma inesperada. Tente de novo em instantes."); }
+      if (!r.ok) throw new Error(dados.erro || "Não foi possível analisar o currículo.");
+
+      urls.forEach(URL.revokeObjectURL); urls = [];
+      const base = nomeArquivo(dados.nome);
       $("lnkCv").href = pdfUrl(dados.curriculo); $("lnkCv").download = `Curriculo_${base}.pdf`;
       $("lnkDiag").href = pdfUrl(dados.diagnostico); $("lnkDiag").download = `Diagnostico_${base}.pdf`;
-      $("titRes").textContent = `Pronto! Nota do currículo original: ${Number(dados.nota).toFixed(1)}/10`;
-      $("resultado").style.display = "block"; status.textContent = "";
+
+      const nota = Math.max(0, Math.min(10, Number(dados.nota) || 0));
+      $("notaValor").textContent = nota.toFixed(1).replace(".", ",");
+      const anel = $("notaAnel");
+      anel.style.setProperty("--p", nota * 10);
+      anel.style.setProperty("--cor-nota", nota >= 7.5 ? "#1E7F4F" : nota >= 5 ? "#F2A93B" : "#B42318");
+      $("notaTexto").textContent = nota >= 7.5 ? "Nota do original: já estava bom, e agora ficou melhor."
+        : nota >= 5 ? "Nota do original: tinha uma boa base, veja o que melhorar no diagnóstico."
+        : "Nota do original: o diagnóstico mostra o caminho para evoluir.";
+      estado("stResultado");
     } catch (e) {
-      status.innerHTML = `<span class="erro">${e.message}</span>`;
-    } finally { btn.disabled = false; }
+      estado("stEnvio");
+      mostrarErro(e.name === "AbortError" ? "A análise demorou demais. Tente de novo." : e.message);
+    } finally {
+      pararEtapas();
+      btn.disabled = !arquivo;
+    }
+  });
+
+  $("outro").addEventListener("click", () => {
+    arquivo = null; btn.disabled = true; limparErro();
+    drop.classList.remove("tem-arquivo");
+    $("dropTitulo").textContent = "Clique ou arraste seu currículo aqui";
+    $("dropSub").textContent = "Arquivo PDF de até 10 MB";
+    $("dropIcone").innerHTML = '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>';
+    estado("stEnvio");
   });
 </script>
 </body>
