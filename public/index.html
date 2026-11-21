@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Currículo Turbo</title>
+<style>
+  :root { --pri:#1F3A5F; --pri2:#2F5D8F; --bg:#F4F7FB; --card:#fff; --txt:#1d2433; --suave:#5b6578; --borda:#d6deea; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background:var(--bg); color:var(--txt); }
+  main { max-width: 640px; margin: 0 auto; padding: 48px 16px; }
+  h1 { font-size: 2rem; margin: 0 0 8px; color: var(--pri); }
+  p.sub { color: var(--suave); margin: 0 0 32px; line-height: 1.5; }
+  .card { background: var(--card); border-radius: 16px; padding: 28px; box-shadow: 0 4px 24px rgba(31,58,95,.08); }
+  .drop { border: 2px dashed var(--borda); border-radius: 12px; padding: 40px 16px; text-align: center; cursor: pointer; transition: .2s; }
+  .drop.ativo, .drop:hover { border-color: var(--pri2); background: #eef3fa; }
+  .drop strong { display:block; margin-bottom:6px; }
+  .drop small { color: var(--suave); }
+  input[type=file] { display:none; }
+  button { width:100%; margin-top:20px; padding:14px; border:0; border-radius:10px; background:var(--pri); color:#fff; font-size:1rem; font-weight:600; cursor:pointer; }
+  button:disabled { opacity:.5; cursor:not-allowed; }
+  .status { margin-top:20px; text-align:center; color:var(--suave); }
+  .spinner { width:28px; height:28px; border:3px solid var(--borda); border-top-color:var(--pri); border-radius:50%; animation: g 1s linear infinite; margin: 0 auto 10px; }
+  @keyframes g { to { transform: rotate(360deg); } }
+  .erro { color:#C62828; }
+  .resultado { display:none; margin-top:24px; }
+  .resultado h2 { font-size:1.1rem; margin:0 0 12px; }
+  .links { display:grid; gap:12px; grid-template-columns: 1fr 1fr; }
+  .links a { display:block; padding:16px; border-radius:10px; text-decoration:none; text-align:center; font-weight:600; border:1px solid var(--borda); color:var(--pri); background:#fff; }
+  .links a:hover { background:#eef3fa; }
+  ul.passos { color: var(--suave); line-height:1.8; padding-left: 20px; margin-top: 28px; }
+  @media (max-width: 480px) { .links { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>Currículo Turbo</h1>
+  <p class="sub">Envie seu currículo em PDF. A IA corrige o português, reorganiza tudo num modelo profissional e gera um diagnóstico com o que melhorar e cursos gratuitos para fazer.</p>
+
+  <div class="card">
+    <label class="drop" id="drop" for="arquivo">
+      <strong id="nomeArq">Clique ou arraste seu currículo aqui</strong>
+      <small>Somente PDF · até 10 MB</small>
+    </label>
+    <input type="file" id="arquivo" accept="application/pdf" />
+    <button id="enviar" disabled>Analisar meu currículo</button>
+    <div class="status" id="status"></div>
+
+    <div class="resultado" id="resultado">
+      <h2 id="titRes">Pronto!</h2>
+      <div class="links">
+        <a id="lnkCv" download>📄 Currículo novo</a>
+        <a id="lnkDiag" download>📊 Diagnóstico</a>
+      </div>
+    </div>
+  </div>
+
+  <ul class="passos">
+    <li>Seu arquivo não fica salvo: é processado e descartado.</li>
+    <li>Revise o currículo gerado antes de enviar a uma vaga.</li>
+  </ul>
+</main>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+  const input = $("arquivo"), drop = $("drop"), btn = $("enviar"), status = $("status");
+  let arquivo = null;
+
+  function escolher(f) {
+    if (!f) return;
+    if (f.type !== "application/pdf") { status.innerHTML = '<span class="erro">Envie um arquivo PDF.</span>'; return; }
+    arquivo = f; $("nomeArq").textContent = f.name; btn.disabled = false; status.textContent = "";
+    $("resultado").style.display = "none";
+  }
+  input.addEventListener("change", () => escolher(input.files[0]));
+  ["dragover", "dragenter"].forEach((e) => drop.addEventListener(e, (ev) => { ev.preventDefault(); drop.classList.add("ativo"); }));
+  ["dragleave", "drop"].forEach((e) => drop.addEventListener(e, (ev) => { ev.preventDefault(); drop.classList.remove("ativo"); }));
+  drop.addEventListener("drop", (ev) => escolher(ev.dataTransfer.files[0]));
+
+  function pdfUrl(b64) {
+    const bytes = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
+    return URL.createObjectURL(new Blob([bytes], { type: "application/pdf" }));
+  }
+
+  btn.addEventListener("click", async () => {
+    if (!arquivo) return;
+    btn.disabled = true;
+    status.innerHTML = '<div class="spinner"></div>Analisando seu currículo... isso pode levar até 1–2 minutos.';
+    const form = new FormData(); form.append("curriculo", arquivo);
+    try {
+      const r = await fetch("/api/analisar", { method: "POST", body: form });
+      const dados = await r.json();
+      if (!r.ok) throw new Error(dados.erro || "Erro ao processar.");
+      const base = (dados.nome || "curriculo").replace(/\s+/g, "_");
+      $("lnkCv").href = pdfUrl(dados.curriculo); $("lnkCv").download = `Curriculo_${base}.pdf`;
+      $("lnkDiag").href = pdfUrl(dados.diagnostico); $("lnkDiag").download = `Diagnostico_${base}.pdf`;
+      $("titRes").textContent = `Pronto! Nota do currículo original: ${Number(dados.nota).toFixed(1)}/10`;
+      $("resultado").style.display = "block"; status.textContent = "";
+    } catch (e) {
+      status.innerHTML = `<span class="erro">${e.message}</span>`;
+    } finally { btn.disabled = false; }
+  });
+</script>
+</body>
+</html>
